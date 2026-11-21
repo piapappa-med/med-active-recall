@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>med-active-recall</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#ffffff;--text:#1b1f27;--muted:#6a7280;--border:#e2e5ea;
+  --accent:#2563eb;--accent-text:#ffffff;--ok:#15803d;--ok-bg:#dcfce7;--bad:#b91c1c;--bad-bg:#fee2e2;
+  --radius:14px;--shadow:0 1px 3px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.04);
+}
+:root[data-theme="dark"]{
+  --bg:#0f1115;--card:#181b22;--text:#e8eaee;--muted:#9aa2b0;--border:#2a2f3a;
+  --accent:#60a5fa;--accent-text:#0b1220;--ok:#4ade80;--ok-bg:#12301e;--bad:#f87171;--bad-bg:#3a1517;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+h1{font-size:1.2rem;margin:0;letter-spacing:-.01em}
+h1 span{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+select,button,input[type=number]{font:inherit;color:var(--text)}
+select,input[type=number]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}
+button{cursor:pointer;border:1px solid var(--border);background:var(--card);padding:10px 14px;border-radius:10px;min-height:44px;transition:.15s}
+button:hover{border-color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+button.small{min-height:36px;padding:6px 12px;font-size:.9rem}
+.seg{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;border-radius:0;background:var(--bg)}
+.seg button.active{background:var(--accent);color:var(--accent-text);font-weight:600}
+.timer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.time{font-variant-numeric:tabular-nums;font-size:1.8rem;font-weight:700;letter-spacing:-.02em}
+.time.done{color:var(--bad)}
+.bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin:6px 0 14px;flex-wrap:wrap;gap:6px}
+.tag{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:2px 10px;font-size:.78rem;color:var(--muted);margin-right:6px}
+.q{font-size:1.05rem;margin:10px 0 16px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;margin-bottom:8px;align-items:flex-start;line-height:1.4}
+.opt b{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;font-size:.8rem}
+.opt.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.opt.correct{background:var(--ok-bg);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.explain{margin-top:12px;padding:12px 14px;border-left:4px solid var(--accent);background:var(--bg);border-radius:8px;font-size:.95rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.stat{background:var(--bg);border-radius:10px;padding:10px}
+.stat strong{display:block;font-size:1.4rem}
+.stat span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.review{border-top:1px solid var(--border);padding-top:14px;margin-top:14px}
+.hidden{display:none!important}
+.note{font-size:.85rem;color:var(--muted)}
+.source{font-size:.8rem;color:var(--muted);margin-top:8px}
+footer{text-align:center;font-size:.8rem;color:var(--muted);padding:12px 0 24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>med<span>-active-recall</span></h1>
+    <button id="themeBtn" class="small" aria-label="Cambiar tema">🌓 Tema</button>
+  </header>
+
+  <section class="card" id="setup">
+    <div class="grid">
+      <div>
+        <label for="subject">Materia</label>
+        <select id="subject"></select>
+      </div>
+      <div>
+        <label for="count">Cantidad de preguntas</label>
+        <select id="count"></select>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <label>Modo</label>
+      <div class="seg" id="modeSeg">
+        <button data-mode="practica" class="active">Práctica</button>
+        <button data-mode="examen">Examen</button>
+      </div>
+      <p class="note" id="modeNote" style="margin:8px 0 0">Feedback inmediato con la explicación deductiva.</p>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="primary" id="startBtn">Comenzar</button>
+      <button id="loadBtn">📂 Cargar archivo .json</button>
+      <input type="file" id="fileInput" accept=".json,application/json" class="hidden">
+    </div>
+    <div class="source" id="source"></div>
+  </section>
+
+  <section class="card">
+    <div class="timer">
+      <div>
+        <label>Bloque de estudio</label>
+        <div class="time" id="time">25:00</div>
+      </div>
+      <div class="row">
+        <select id="duration" style="width:auto">
+          <option value="15">15 min</option>
+          <option value="25" selected>25 min</option>
+          <option value="50">50 min</option>
+        </select>
+        <button class="small primary" id="tStart">Iniciar</button>
+        <button class="small" id="tPause" disabled>Pausar</button>
+        <button class="small" id="tReset">Reiniciar</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="card">
+      <div class="bar"><i id="bar"></i></div>
+      <div class="meta">
+        <span id="progressTxt"></span>
+        <span id="liveStats"></span>
+      </div>
+      <div><span class="tag" id="qSubject"></span><span class="tag" id="qTopic"></span></div>
+      <div class="q" id="qText"></div>
+      <div id="options"></div>
+      <div class="explain hidden" id="explain"></div>
+      <div class="row" style="margin-top:14px;justify-content:space-between">
+        <button id="endBtn" class="small">Finalizar</button>
+        <button id="nextBtn" class="primary" disabled>Siguiente</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="card hidden">
+    <h2 style="margin-top:0">Resultados</h2>
+    <div class="stats">
+      <div class="stat"><strong class="ok" id="rOk">0</strong><span>Aciertos</span></div>
+      <div class="stat"><strong class="bad" id="rBad">0</strong><span>Errores</span></div>
+      <div class="stat"><strong id="rPct">0%</strong><span>Puntaje</span></div>
+    </div>
+    <div id="reviewBox"></div>
+    <div class="row" style="margin-top:16px">
+      <button class="primary" id="againBtn">Nueva sesión</button>
+    </div>
+  </section>
+
+  <footer>med-active-recall · MIT</footer>
+</div>
+
+<script>
+(function(){
+  const FALLBACK=[
+    {id:"fb-1",materia:"Anatomía topográfica",tema:"Cuello",pregunta:"Un paciente sufre una herida cortante en el triángulo posterior del cuello y presenta imposibilidad de elevar el hombro por encima de la horizontal, con escápula alada. ¿Qué estructura nerviosa es la más probablemente lesionada?",opciones:["Nervio frénico","Nervio accesorio (XI par)","Nervio hipogloso","Plexo braquial (tronco inferior)"],respuesta_correcta:1,explicacion_deductiva:"El nervio accesorio discurre superficial en el triángulo posterior e inerva esternocleidomastoideo y trapecio. Su lesión paraliza el trapecio: no se eleva ni se rota la escápula, por lo que el hombro cae y la escápula se despega."},
+    {id:"fb-2",materia:"Química Biológica",tema:"Metabolismo del glucógeno",pregunta:"Un niño presenta hipoglucemia en ayunas y hepatomegalia. La biopsia hepática muestra glucógeno de estructura normal en exceso, y la glucemia no sube tras glucagón. ¿Qué enzima está deficiente?",opciones:["Glucógeno fosforilasa muscular","Enzima desramificante","Glucosa-6-fosfatasa","Fosfofructoquinasa-1"],respuesta_correcta:2,explicacion_deductiva:"Sin glucosa-6-fosfatasa el hígado no puede liberar glucosa libre: el glucagón activa la glucogenólisis pero la glucosa-6-fosfato queda atrapada. Hay hipoglucemia y acúmulo de glucógeno de estructura normal (enfermedad de von Gierke)."}
+  ];
+  const $=id=>document.getElementById(id);
+  const state={bank:[],source:"",mode:"practica",queue:[],idx:0,answers:[],answered:false,timer:{total:1500,left:1500,id:null}};
+
+  function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+  function esc(s){const d=document.createElement("div");d.textContent=String(s);return d.innerHTML}
+
+  function validate(data){
+    if(!Array.isArray(data))throw new Error("El JSON debe ser un arreglo de preguntas.");
+    const ok=data.filter(q=>q&&typeof q.pregunta==="string"&&Array.isArray(q.opciones)&&q.opciones.length>=2&&Number.isInteger(q.respuesta_correcta)&&q.respuesta_correcta>=0&&q.respuesta_correcta<q.opciones.length);
+    if(!ok.length)throw new Error("No se encontraron preguntas válidas.");
+    return ok.map((q,i)=>({id:q.id??("q-"+i),materia:q.materia||"General",tema:q.tema||"",pregunta:q.pregunta,opciones:q.opciones.map(String),respuesta_correcta:q.respuesta_correcta,explicacion_deductiva:q.explicacion_deductiva||"Sin explicación disponible."}));
+  }
+
+  function setBank(data,label){
+    state.bank=validate(data);state.source=label;
+    const subs=[...new Set(state.bank.map(q=>q.materia))].sort();
+    $("subject").innerHTML='<option value="__all">Todas las materias</option>'+subs.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("");
+    updateCounts();
+    $("source").textContent=`Fuente: ${label} · ${state.bank.length} preguntas`;
+  }
+
+  function pool(){const s=$("subject").value;return s==="__all"?state.bank:state.bank.filter(q=>q.materia===s)}
+  function updateCounts(){
+    const n=pool().length,opts=[];
+    for(let i=5;i<n;i+=5)opts.push(i);
+    opts.push(n);
+    const uniq=[...new Set(opts.filter(x=>x>0))];
+    $("count").innerHTML=uniq.map(x=>`<option value="${x}">${x===n?"Todas ("+n+")":x}</option>`).join("");
+    $("count").value=String(n);
+  }
+
+  async function init(){
+    try{
+      const r=await fetch("preguntas-ejemplo.json",{cache:"no-store"});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      setBank(await r.json(),"preguntas-ejemplo.json");
+    }catch(e){
+      setBank(FALLBACK,"respaldo embebido (2 preguntas; usa «Cargar archivo .json» o un servidor local)");
+    }
+  }
+
+  $("subject").addEventListener("change",updateCounts);
+  $("loadBtn").addEventListener("click",()=>$("fileInput").click());
+  $("fileInput").addEventListener("change",e=>{
+    const f=e.target.files[0];if(!f)return;
+    const fr=new FileReader();
+    fr.onload=()=>{try{setBank(JSON.parse(fr.result),f.name);resetQuiz()}catch(err){alert("Error al leer el archivo: "+err.message)}};
+    fr.onerror=()=>alert("No se pudo leer el archivo.");
+    fr.readAsText(f);e.target.value="";
+  });
+
+  document.querySelectorAll("#modeSeg button").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#modeSeg button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");state.mode=b.dataset.mode;
+    $("modeNote").textContent=state.mode==="practica"?"Feedback inmediato con la explicación deductiva.":"Las respuestas se ocultan hasta finalizar; verás puntaje y repaso de errores.";
+  }));
+
+  function resetQuiz(){
+    $("quiz").classList.add("hidden");$("results").classList.add("hidden");$("setup").classList.remove("hidden");
+  }
+
+  $("startBtn").addEventListener("click",()=>{
+    const p=pool();if(!p.length){alert("No hay preguntas para esta materia.");return}
+    const n=Math.min(parseInt($("count").value,10)||p.length,p.length);
+    state.queue=shuffle(p).slice(0,n).map(q=>{
+      const order=shuffle(q.opciones.map((_,i)=>i));
+      return{...q,opciones:order.map(i=>q.opciones[i]),respuesta_correcta:order.indexOf(q.respuesta_correcta)};
+    });
+    state.idx=0;state.answers=new Array(n).fill(null);state.answered=false;
+    $("setup").classList.add("hidden");$("results").classList.add("hidden");$("quiz").classList.remove("hidden");
+    render();
+  });
+
+  function liveStats(){
+    const done=state.answers.filter(a=>a!==null);
+    if(state.mode==="examen")return`Respondidas: ${done.length}`;
+    const ok=done.filter((a,i)=>a!==null).length;
+    let hits=0;state.answers.forEach((a,i)=>{if(a!==null&&a===state.queue[i].respuesta_correcta)hits++});
+    return`✔ ${hits} · ✘ ${done.length-hits}`;
+  }
+
+  function render(){
+    const q=state.queue[state.idx],n=state.queue.length;
+    $("progressTxt").textContent=`Pregunta ${state.idx+1} de ${n}`;
+    $("bar").style.width=(state.idx/n*100)+"%";
+    $("liveStats").textContent=liveStats();
+    $("qSubject").textContent=q.materia;
+    $("qTopic").textContent=q.tema;$("qTopic").classList.toggle("hidden",!q.tema);
+    $("qText").textContent=q.pregunta;
+    $("explain").classList.add("hidden");
+    const prev=state.answers[state.idx];
+    state.answered=prev!==null&&state.mode==="practica";
+    $("options").innerHTML=q.opciones.map((o,i)=>`<button class="opt" data-i="${i}"><b>${String.fromCharCode(65+i)}</b><span>${esc(o)}</span></button>`).join("");
+    $("options").querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>choose(parseInt(b.dataset.i,10))));
+    if(prev!==null)paint(prev);
+    $("nextBtn").disabled=prev===null;
+    $("nextBtn").textContent=state.idx===n-1?"Ver resultados":"Siguiente";
+  }
+
+  function paint(sel){
+    const q=state.queue[state.idx];
+    const btns=$("options").querySelectorAll(".opt");
+    btns.forEach((b,i)=>{
+      b.classList.remove("selected","correct","wrong");
+      if(state.mode==="practica"){
+        b.disabled=true;
+        if(i===q.respuesta_correcta)b.classList.add("correct");
+        else if(i===sel)b.classList.add("wrong");
+      }else if(i===sel)b.classList.add("selected");
+    });
+    if(state.mode==="practica"){
+      const ex=$("explain");
+      ex.innerHTML=`<strong>${sel===q.respuesta_correcta?"✔ Correcto":"✘ Incorrecto"}</strong><br>${esc(q.explicacion_deductiva)}`;
+      ex.classList.remove("hidden");
+    }
+  }
+
+  function choose(i){
+    if(state.mode==="practica"&&state.answered)return;
+    state.answers[state.idx]=i;state.answered=true;
+    paint(i);
+    $("nextBtn").disabled=false;
+    $("liveStats").textContent=liveStats();
+  }
+
+  $("nextBtn").addEventListener("click",()=>{
+    if(state.idx<state.queue.length-1){state.idx++;render()}else finish();
+  });
+  $("endBtn").addEventListener("click",()=>{if(confirm("¿Finalizar la sesión ahora?"))finish()});
+
+  function finish(){
+    const n=state.queue.length;
+    let hits=0,answered=0;
+    state.answers.forEach((a,i)=>{if(a!==null){answered++;if(a===state.queue[i].respuesta_correcta)hits++}});
+    const bad=answered-hits;
+    $("quiz").classList.add("hidden");$("results").classList.remove("hidden");
+    $("rOk").textContent=hits;$("rBad").textContent=bad;
+    $("rPct").textContent=Math.round(hits/n*100)+"%";
+    const wrong=[];
+    state.queue.forEach((q,i)=>{if(state.answers[i]!==q.respuesta_correcta)wrong.push(i)});
+    $("reviewBox").innerHTML=wrong.length?`<div class="review"><h3 style="margin:0 0 8px">Repaso de errores y omisiones (${wrong.length})</h3>`+wrong.map(i=>{
+      const q=state.queue[i],a=state.answers[i];
+      return`<div class="review"><div><span class="tag">${esc(q.materia)}</span><span class="tag">${esc(q.tema)}</span></div><p><strong>${esc(q.pregunta)}</strong></p>
+      <p class="bad">Tu respuesta: ${a===null?"sin responder":esc(q.opciones[a])}</p>
+      <p class="ok">Correcta: ${esc(q.opciones[q.respuesta_correcta])}</p>
+      <div class="explain">${esc(q.explicacion_deductiva)}</div></div>`}).join("")+`</div>`:`<p class="ok" style="margin-top:14px"><strong>¡Sin errores! Excelente sesión.</strong></p>`;
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  $("againBtn").addEventListener("click",resetQuiz);
+
+  function fmt(s){const m=Math.floor(s/60),r=s%60;return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0")}
+  function drawTime(){$("time").textContent=fmt(state.timer.left);$("time").classList.toggle("done",state.timer.left===0)}
+  function stopTimer(){clearInterval(state.timer.id);state.timer.id=null;$("tStart").disabled=false;$("tPause").disabled=true}
+  $("duration").addEventListener("change",()=>{stopTimer();state.timer.total=parseInt($("duration").value,10)*60;state.timer.left=state.timer.total;drawTime()});
+  $("tStart").addEventListener("click",()=>{
+    if(state.timer.id)return;
+    if(state.timer.left===0)state.timer.left=state.timer.total;
+    $("tStart").disabled=true;$("tPause").disabled=false;
+    state.timer.id=setInterval(()=>{
+      state.timer.left--;drawTime();
+      if(state.timer.left<=0){
+        stopTimer();state.timer.left=0;drawTime();
+        if(navigator.vibrate)navigator.vibrate([200,100,200]);
+        setTimeout(()=>alert("⏰ Bloque de estudio finalizado. Tómate un descanso."),50);
+      }
+    },1000);
+  });
+  $("tPause").addEventListener("click",stopTimer);
+  $("tReset").addEventListener("click",()=>{stopTimer();state.timer.left=state.timer.total;drawTime()});
+
+  const root=document.documentElement;
+  const saved=(()=>{try{return localStorage.getItem("mar-theme")}catch(e){return null}})();
+  if(saved)root.dataset.theme=saved;
+  else root.dataset.theme=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  $("themeBtn").addEventListener("click",()=>{
+    const t=root.dataset.theme==="dark"?"light":"dark";
+    root.dataset.theme=t;
+    try{localStorage.setItem("mar-theme",t)}catch(e){}
+  });
+
+  drawTime();
+  init();
+})();
+</script>
+</body>
+</html>

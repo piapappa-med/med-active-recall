@@ -1,0 +1,72 @@
+[
+  {
+    "id": "anat-001",
+    "materia": "Anatomía topográfica",
+    "tema": "Región inguinal",
+    "pregunta": "Un hombre de 58 años consulta por una tumoración inguinal que aparece al toser. En el examen, la hernia protruye por encima del ligamento inguinal, lateral a los vasos epigástricos inferiores, y desciende dentro del cordón espermático hasta el escroto. ¿Qué estructura atraviesa primero el saco herniario en su recorrido?",
+    "opciones": [
+      "El anillo inguinal profundo",
+      "El triángulo de Hesselbach",
+      "El anillo femoral",
+      "El conducto obturador"
+    ],
+    "respuesta_correcta": 0,
+    "explicacion_deductiva": "Una hernia lateral a los vasos epigástricos inferiores es indirecta: sigue el trayecto del conducto peritoneovaginal embrionario. Ingresa por el anillo inguinal profundo (en la fascia transversalis, lateral a los epigástricos), recorre el conducto inguinal envuelta por las cubiertas del cordón y sale por el anillo superficial hasta el escroto. El triángulo de Hesselbach (medial a los epigástricos) corresponde a las hernias directas; el anillo femoral y el conducto obturador están por debajo del ligamento inguinal o en la pelvis."
+  },
+  {
+    "id": "anat-002",
+    "materia": "Anatomía topográfica",
+    "tema": "Fosa poplítea",
+    "pregunta": "Tras una luxación posterior de rodilla, un paciente presenta pie frío, pulsos pedio y tibial posterior ausentes, y cianosis distal. Se sospecha lesión vascular. ¿Cuál es la razón anatómica por la que el eje vascular poplíteo es especialmente vulnerable en este tipo de traumatismo?",
+    "opciones": [
+      "La arteria poplítea está fijada proximalmente en el hiato aductor y distalmente por el arco del sóleo, con escasa laxidad intermedia",
+      "La vena poplítea discurre superficial al nervio tibial y es la primera en comprimirse",
+      "La arteria poplítea carece de ramas geniculares, por lo que no tiene circulación colateral",
+      "El nervio ciático poplíteo externo la envuelve en toda su extensión"
+    ],
+    "respuesta_correcta": 0,
+    "explicacion_deductiva": "La arteria poplítea es la parte más profunda del contenido de la fosa y queda anclada arriba en el hiato del aductor mayor y abajo en el arco tendinoso del sóleo. Al desplazarse la tibia hacia atrás, el vaso no puede acompañar el movimiento y se estira, se desgarra o se lesiona la íntima. Sí posee ramas geniculares (anastomosis genicular), pero son insuficientes ante una oclusión aguda. La vena es superficial a la arteria y profunda al nervio tibial; el ciático poplíteo externo (peroneo común) no la envuelve."
+  },
+  {
+    "id": "anat-003",
+    "materia": "Anatomía topográfica",
+    "tema": "Mediastino y tórax",
+    "pregunta": "Una paciente de 62 años con carcinoma broncogénico del vértice pulmonar izquierdo presenta ronquera y tos bitonal. La laringoscopia muestra cuerda vocal izquierda inmóvil en posición paramediana. ¿Qué relación anatómica explica este hallazgo?",
+    "opciones": [
+      "El nervio laríngeo recurrente izquierdo rodea el cayado aórtico por debajo del ligamento arterioso y asciende en el surco traqueoesofágico",
+      "El nervio laríngeo superior izquierdo cruza el ápex pulmonar por delante de la arteria subclavia",
+      "El nervio frénico izquierdo asciende por delante del hilio y rodea el cayado aórtico",
+      "El nervio vago izquierdo cruza por detrás del bronquio principal izquierdo y emite la rama cardíaca"
+    ],
+    "respuesta_correcta": 0,
+    "explicacion_deductiva": "El laríngeo recurrente izquierdo nace del vago a nivel del cayado aórtico, lo rodea por debajo (por fuera del ligamento arterioso) y asciende por el surco traqueoesofágico izquierdo, en íntimo contacto con la pleura apical y los ganglios mediastínicos. Un tumor apical o adenopatías lo comprimen, paralizando los músculos intrínsecos de la laringe (salvo el cricotiroideo) y dejando la cuerda inmóvil con disfonía. El frénico no inerva la laringe; el laríngeo superior es sensitivo/motor del cricotiroideo y no se relaciona con el ápex."
+  },
+  {
+    "id": "qb-001",
+    "materia": "Química Biológica",
+    "tema": "Metabolismo de aminoácidos",
+    "pregunta": "Un lactante presenta vómitos, letargo y orina con olor a jarabe de arce tras iniciar alimentación proteica. Los análisis muestran acumulación de cetoácidos de cadena ramificada. ¿Cuál es el defecto enzimático y qué cofactor es esencial para el complejo afectado?",
+    "opciones": [
+      "Deficiencia de fenilalanina hidroxilasa; tetrahidrobiopterina",
+      "Deficiencia del complejo α-cetoácido deshidrogenasa de cadena ramificada; tiamina pirofosfato",
+      "Deficiencia de cistationina β-sintasa; piridoxal fosfato",
+      "Deficiencia de homogentisato oxidasa; vitamina C"
+    ],
+    "respuesta_correcta": 1,
+    "explicacion_deductiva": "Los cetoácidos acumulados derivan de leucina, isoleucina y valina tras la transaminación; su descarboxilación oxidativa requiere el complejo α-cetoácido deshidrogenasa de cadena ramificada, análogo a la piruvato y α-cetoglutarato deshidrogenasa. Sus cofactores incluyen TPP, ácido lipoico, CoA, FAD y NAD⁺. Su déficit causa la enfermedad de la orina con olor a jarabe de arce. La fenilalanina hidroxilasa produce fenilcetonuria, la cistationina β-sintasa homocistinuria y la homogentisato oxidasa alcaptonuria."
+  },
+  {
+    "id": "qb-002",
+    "materia": "Química Biológica",
+    "tema": "Metabolismo de lípidos",
+    "pregunta": "Un niño de 3 años presenta hipoglucemia hipocetósica y letargo tras un ayuno prolongado por una gastroenteritis. Se detecta aumento de dicarboxílicos urinarios y de acilcarnitinas de cadena media. ¿Qué proceso metabólico está comprometido y por qué la hipoglucemia es hipocetósica?",
+    "opciones": [
+      "La gluconeogénesis hepática, porque falta piruvato carboxilasa y se acumula acetil-CoA que activa la cetogénesis",
+      "La β-oxidación mitocondrial de ácidos grasos, que impide generar acetil-CoA y ATP/NADH necesarios para la cetogénesis y la gluconeogénesis",
+      "La glucogenólisis hepática, porque falta glucosa-6-fosfatasa y los ácidos grasos no pueden oxidarse",
+      "La síntesis de ácidos grasos, porque la acetil-CoA carboxilasa está hiperactiva y consume el acetil-CoA"
+    ],
+    "respuesta_correcta": 1,
+    "explicacion_deductiva": "En el ayuno el hígado depende de la oxidación de ácidos grasos para obtener ATP y NADH (que sostienen la gluconeogénesis) y acetil-CoA (sustrato de la cetogénesis). Un defecto de la acil-CoA deshidrogenasa de cadena media bloquea la β-oxidación: se acumulan acilcarnitinas de cadena media y se desvían a ω-oxidación (dicarboxílicos urinarios). Sin acetil-CoA ni energía suficientes hay poca cetogénesis y la gluconeogénesis falla, produciendo hipoglucemia hipocetósica."
+  }
+]
